@@ -1,9 +1,18 @@
 var bg,bgImg;
 var player, shooterImg, shooter_shooting;
 var zoombie, zoombieImg
-var zoombieGroup
+var zoombieGroup;
+
+var heart1, heart2, heart3
+var heart1Img, heart2Img, heart3Img
+var  bullets = 10
+var bulletGroup
+var bullet
+
 function preload(){
-  
+  heart1Img = loadImage("assets/heart_1.png")
+  heart2Img = loadImage("assets/heart_2.png")
+  heart3Img = loadImage("assets/heart_3.png")
   shooterImg = loadImage("assets/shooter_2.png")
   shooter_shooting = loadImage("assets/shooter_3.png")
 
@@ -29,8 +38,24 @@ player = createSprite(displayWidth-1150, displayHeight-300, 50, 50);
    player.debug = true
    player.setCollider("rectangle",0,0,300,300)
 
+   heart1 = createSprite(displayWidth -150, 40, 20, 20);
+   heart1.addImage("heart1", heart1Img)
+   heart1.scale = 0.4
+   heart1.visible = false
+
+   heart2 = createSprite(displayWidth -100, 40, 20, 20);
+   heart2.addImage("heart2", heart2Img)
+   heart2.scale = 0.4
+   heart2.visible = false
+
+   heart3 = createSprite(displayWidth -150, 40, 20, 20);
+   heart3.addImage("heart3", heart3Img)
+   heart3.scale = 0.4
+
  zoombieGroup = new Group()
+ bulletGroup = new Group()
 }
+
 
 function draw() {
   background(0); 
@@ -49,9 +74,13 @@ if(keyDown("DOWN_ARROW")||touches.length>0){
 
 //solte balas e mude a imagem do atirador para a posição de tiro quando a tecla de espaço for pressionada
 if(keyWentDown("space")){
- 
-  player.addImage(shooter_shooting)
- 
+  bullet = createSprite(displayWidth-1150,player.y-30,20,10)
+   bullet.velocityX = 20 
+   bulletGroup.add(bullet)
+    player.depth = bullet.depth 
+    player.depth = player.depth+2
+     player.addImage(shooter_shooting)
+      bullets = bullets-1 
 }
 
 //o jogador volta à imagem original quando pararmos de pressionar a barra de espaço
@@ -59,12 +88,20 @@ else if(keyWentUp("space")){
   player.addImage(shooterImg)
 }
 
+if (zoombieGroup.isTouching(player)) {
+ for (var i = 0; i < zoombieGroup.length; i++){
+  if (zoombieGroup[i].isTouching(player)) {
+   zoombieGroup[i].destroy
+  }
+ }
+}
+ enemy ()
 drawSprites();
 
 }
 function enemy (){
   if (frameCount %50===0 ) {
-  zoombie = createSprite(random(500,1100), random(100,500), 40, 40 );
+  zoombie = createSprite(random(500,1100), random(400,700), 40, 40 );
   zoombie.addImage(zoombieImg);
   zoombie.scale = 0.15
   zoombie.velocityX = -3;
